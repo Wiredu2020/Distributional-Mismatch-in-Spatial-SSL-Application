@@ -1,0 +1,36 @@
+# WILDS PovertyMap benchmark sweep (manuscript methods.tex, Sec. "Benchmark
+# Dataset Evaluation" ToDo). Mirrors configs/controlled_experiment.yaml's
+# structure: varies mismatch severity (alpha, via number of source countries
+# the labelled set is drawn from) over multiple seeds for each baseline
+# method, re-using the same divergence/evaluation code as the synthetic pilot.
+
+output_csv: results/wilds_povertymap_experiment.csv
+data_dir: data/wilds_povertymap
+
+wilds:
+  fold: A                 # WILDS official country fold (A-E)
+  candidate_per_country: 90  # per train-country labelled candidate pool size
+  n_unlabelled: 300
+  n_test_in: 150
+  n_test_out: 150
+  pool_seed: 0             # fixed seed used to build the pools themselves
+
+sweep:
+  mismatch_alpha: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+  seeds: [0, 1, 2]
+  n_labelled: 60
+
+methods: [supervised_only, self_training, label_propagation]
+
+n_pca_components: 5  # 40 band-summary features -> 5 PCA components (KDE-based KL
+                      # divergence needs n_labelled >> n_features; matches the low
+                      # feature dimensionality used by the synthetic generator)
+
+divergence:
+  n_bins: 5
+  min_count: 5
+
+download:
+  max_workers: 6
+  max_retries: 5
+  timeout: 30.0

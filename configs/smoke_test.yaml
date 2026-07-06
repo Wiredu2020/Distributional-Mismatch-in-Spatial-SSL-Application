@@ -1,0 +1,25 @@
+output_csv: results/smoke_test.csv
+
+sweep:
+  mismatch_alpha: [0.0, 0.5, 1.0]
+  lengthscale: [0.08]
+  nonstationarity_strength: [0.0]
+  seeds: [0]
+
+methods: [supervised_only, self_training, label_propagation]
+
+dataset:
+  grid_resolution: 100
+  n_features: 2
+  n_labelled: 150
+  n_unlabelled: 600
+  n_test_in: 300
+  n_test_out: 300
+  noise_std: 0.3
+  label_anchor: [0.25, 0.25]
+  bandwidth_min: 0.10
+  bandwidth_max: 0.75
+
+divergence:
+  n_bins: 5
+  min_count: 5
