@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36">
+  <diagram id="admin_features" name="Admin Features">
+    <mxGraphModel dx="213100" dy="125700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="adminUser" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;" value="AdminUser" vertex="1">
+          <mxGeometry height="60" width="120" x="70" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="supportTicket" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;" value="SupportTicket" vertex="1">
+          <mxGeometry height="60" width="140" x="300" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="refund" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;" value="Refund" vertex="1">
+          <mxGeometry height="60" width="100" x="540" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="booking" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;" value="Booking" vertex="1">
+          <mxGeometry height="60" width="120" x="300" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="dispute" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;" value="Dispute" vertex="1">
+          <mxGeometry height="60" width="100" x="540" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="vehicle" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;" value="Vehicle" vertex="1">
+          <mxGeometry height="60" width="120" x="80" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="fleet" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;" value="Fleet" vertex="1">
+          <mxGeometry height="60" width="120" x="80" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="payment" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;" value="Payment" vertex="1">
+          <mxGeometry height="60" width="120" x="540" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" edge="1" parent="1" source="adminUser" style="endArrow=block;strokeColor=#000000;" target="supportTicket" />
+        <mxCell id="edge2" edge="1" parent="1" source="supportTicket" style="endArrow=block;strokeColor=#000000;" target="booking" />
+        <mxCell id="edge3" edge="1" parent="1" source="refund" style="endArrow=block;strokeColor=#000000;" target="payment" />
+        <mxCell id="edge4" edge="1" parent="1" source="booking" style="endArrow=block;strokeColor=#000000;" target="vehicle" />
+        <mxCell id="edge5" edge="1" parent="1" source="vehicle" style="endArrow=block;strokeColor=#000000;" target="fleet" />
+        <mxCell id="edge6" edge="1" parent="1" source="booking" style="endArrow=block;strokeColor=#000000;" target="dispute" />
+        <mxCell id="YEb8uvFNXBqh1Tp7pbuS-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="100" width="190" x="-3370" y="-1990" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

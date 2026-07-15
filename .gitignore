@@ -2,7 +2,7 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 results/*.csv
-figures/*.png
+figures/.gitkeep
 .venv/
 .claude/
 *.egg-info/
@@ -16,4 +16,7 @@ data/
 notebooks/.ipynb_checkpoints/
 manuscript/
 .claude/
-
+Marginal distribution mismatch study for SSL.docx
+CLAUDE.md
+results/findings_notes.md
+.gitignore

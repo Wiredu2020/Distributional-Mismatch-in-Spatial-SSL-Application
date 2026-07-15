@@ -59,13 +59,11 @@ def plot_accuracy_vs_mismatch(df: pd.DataFrame, out_path: Path):
         _style_axes(ax)
         title = "Stationary label process" if stat == 0 else f"Non-stationary (strength={stat})"
         ax.set_title(title, color=INK_PRIMARY, fontsize=11, loc="left")
-        ax.set_xlabel("Mismatch level (mismatch_alpha)", color=INK_SECONDARY, fontsize=10)
+        ax.set_xlabel("Mismatch level", color=INK_SECONDARY, fontsize=10)
 
     axes[0].set_ylabel("Out-of-region accuracy", color=INK_SECONDARY, fontsize=10)
     axes[-1].legend(frameon=False, fontsize=9, loc="lower left", labelcolor=INK_SECONDARY)
-    fig.suptitle("H1/H2: SSL performance degrades as labelled-unlabelled mismatch increases",
-                 color=INK_PRIMARY, fontsize=12, x=0.01, ha="left")
-    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    fig.tight_layout()
     fig.savefig(out_path, dpi=150, facecolor=SURFACE)
     plt.close(fig)
 
@@ -78,11 +76,8 @@ def plot_spatial_gap_vs_mismatch(df: pd.DataFrame, out_path: Path):
                  color=METHOD_COLORS[method], label=METHOD_LABELS[method], zorder=3)
     ax.axhline(0, color=BASELINE, linewidth=1, zorder=1)
     _style_axes(ax)
-    ax.set_xlabel("Mismatch level (mismatch_alpha)", color=INK_SECONDARY, fontsize=10)
-    ax.set_ylabel("Spatial generalisation gap (in-region − out-of-region accuracy)",
-                   color=INK_SECONDARY, fontsize=10)
-    ax.set_title("H1: models overfit the labelled region as mismatch grows",
-                 color=INK_PRIMARY, fontsize=12, loc="left")
+    ax.set_xlabel("Mismatch level", color=INK_SECONDARY, fontsize=10)
+    ax.set_ylabel("Spatial generalisation gap", color=INK_SECONDARY, fontsize=10)
     ax.legend(frameon=False, fontsize=9, loc="upper left", labelcolor=INK_SECONDARY)
     fig.tight_layout()
     fig.savefig(out_path, dpi=150, facecolor=SURFACE)
@@ -97,10 +92,8 @@ def plot_divergence_vs_accuracy(df: pd.DataFrame, out_path: Path):
                     color=METHOD_COLORS[method], label=METHOD_LABELS[method], zorder=3,
                     edgecolors="none")
     _style_axes(ax)
-    ax.set_xlabel("Measured mismatch (MMD, labelled vs unlabelled)", color=INK_SECONDARY, fontsize=10)
+    ax.set_xlabel("Measured mismatch (MMD)", color=INK_SECONDARY, fontsize=10)
     ax.set_ylabel("Out-of-region accuracy", color=INK_SECONDARY, fontsize=10)
-    ax.set_title("Section 6.3 validation: higher measured MMD tracks lower accuracy",
-                 color=INK_PRIMARY, fontsize=12, loc="left")
     ax.legend(frameon=False, fontsize=9, loc="lower left", labelcolor=INK_SECONDARY)
     fig.tight_layout()
     fig.savefig(out_path, dpi=150, facecolor=SURFACE)

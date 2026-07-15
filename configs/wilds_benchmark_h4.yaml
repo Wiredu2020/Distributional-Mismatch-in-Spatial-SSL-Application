@@ -1,0 +1,33 @@
+# H4 test on WILDS PovertyMap: identical sweep to configs/wilds_benchmark.yaml,
+# with reweighted_self_training (manuscript methods.tex Section 2.6) added
+# alongside the three original baselines. Kept as a separate config/output
+# file so results/wilds_povertymap_experiment.csv is untouched.
+
+output_csv: results/wilds_povertymap_h4.csv
+data_dir: data/wilds_povertymap
+
+wilds:
+  fold: A
+  candidate_per_country: 90
+  n_unlabelled: 300
+  n_test_in: 150
+  n_test_out: 150
+  pool_seed: 0
+
+sweep:
+  mismatch_alpha: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+  seeds: [0, 1, 2]
+  n_labelled: 60
+
+methods: [supervised_only, self_training, label_propagation, reweighted_self_training]
+
+n_pca_components: 5
+
+divergence:
+  n_bins: 5
+  min_count: 5
+
+download:
+  max_workers: 6
+  max_retries: 5
+  timeout: 30.0

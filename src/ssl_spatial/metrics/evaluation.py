@@ -40,10 +40,22 @@ def evaluate_classifier(clf, X_test_in: np.ndarray, y_test_in: np.ndarray,
     and an out-of-region test set (uniform over the domain). The gap between
     the two is the spatial generalisation error referenced in section 6.5.
     """
-    pred_in = clf.predict(X_test_in)
-    pred_out = clf.predict(X_test_out)
     proba_in = _positive_class_proba(clf, X_test_in)
     proba_out = _positive_class_proba(clf, X_test_out)
+    return evaluate_from_proba(proba_in, y_test_in, proba_out, y_test_out)
+
+
+def evaluate_from_proba(proba_in: np.ndarray, y_test_in: np.ndarray,
+                         proba_out: np.ndarray, y_test_out: np.ndarray) -> dict:
+    """Same metrics as `evaluate_classifier`, but taking positive-class
+    probabilities directly rather than a fitted classifier object. Used by
+    the comparative study (`notebooks/spatial_methods_comparison.ipynb`) for
+    methods -- graph-based ones in particular -- whose predictions are
+    computed transductively over the whole node set rather than through a
+    conventional `.fit()`/`.predict()` split.
+    """
+    pred_in = (proba_in >= 0.5).astype(int)
+    pred_out = (proba_out >= 0.5).astype(int)
 
     acc_in = accuracy_score(y_test_in, pred_in)
     acc_out = accuracy_score(y_test_out, pred_out)

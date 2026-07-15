@@ -1,0 +1,33 @@
+# H4 test on synthetic data (manuscript methods.tex Section 2.6): identical
+# sweep to configs/controlled_experiment.yaml, with reweighted_self_training
+# (Section 2.6's re-weighting component layered on self-training) added
+# alongside the three original baselines, so plain vs re-weighted
+# self-training can be compared directly under the same controlled sweep.
+# Kept as a separate config/output file so results/controlled_experiment.csv
+# (and the numbers already reported from it) are untouched.
+
+output_csv: results/controlled_experiment_h4.csv
+
+sweep:
+  mismatch_alpha: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+  lengthscale: [0.04, 0.08, 0.16]
+  nonstationarity_strength: [0.0, 1.5]
+  seeds: [0, 1, 2]
+
+methods: [supervised_only, self_training, label_propagation, reweighted_self_training]
+
+dataset:
+  grid_resolution: 100
+  n_features: 2
+  n_labelled: 150
+  n_unlabelled: 600
+  n_test_in: 300
+  n_test_out: 300
+  noise_std: 0.3
+  label_anchor: [0.25, 0.25]
+  bandwidth_min: 0.10
+  bandwidth_max: 0.75
+
+divergence:
+  n_bins: 5
+  min_count: 5

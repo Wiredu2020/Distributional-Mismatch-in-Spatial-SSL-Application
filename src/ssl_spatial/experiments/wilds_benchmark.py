@@ -31,8 +31,10 @@ from ssl_spatial.data.wilds_poverty import (
 from ssl_spatial.metrics.divergence import kl_divergence_kde, mmd_rbf, wasserstein_marginal
 from ssl_spatial.metrics.evaluation import evaluate_classifier
 from ssl_spatial.models.baselines import BASELINE_METHODS
+from ssl_spatial.models.distribution_aware import DISTRIBUTION_AWARE_METHODS
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
+ALL_METHODS = {**BASELINE_METHODS, **DISTRIBUTION_AWARE_METHODS}
 
 
 def _standardize(X: np.ndarray, mean: np.ndarray, std: np.ndarray) -> np.ndarray:
@@ -104,7 +106,7 @@ def run(config_path: str) -> pd.DataFrame:
         mmd = mmd_rbf(X_l, X_u)
 
         for method in methods:
-            fit_fn = BASELINE_METHODS[method]
+            fit_fn = ALL_METHODS[method]
             clf = fit_fn(X_l, y_l, X_u, seed=seed)
             perf = evaluate_classifier(clf, X_in, y_in, X_out, y_out)
 

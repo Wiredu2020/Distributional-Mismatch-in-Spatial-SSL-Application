@@ -1,0 +1,24 @@
+# Real-world benchmark: California Housing (manuscript methods.tex Sec.
+# 2.2.3, "Housing and the built environment"). Region = nearest CA county;
+# mismatch severity = number of source counties the labelled set is drawn
+# from (13, 11, 8, 6, 3, 1 analogue, scaled to this dataset's ~40 counties).
+
+output_csv: results/housing_experiment.csv
+data_dir: data/real_world/housing
+dataset: housing
+
+regions:
+  train_fraction: 0.7   # ~40 of ~58 CA counties used as "training" regions
+  split_seed: 0
+  candidate_per_region: 250
+  n_unlabelled: 600
+  n_test_in: 300
+  n_test_out: 300
+  pool_seed: 0
+
+sweep:
+  mismatch_alpha: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+  seeds: [0, 1, 2]
+  n_labelled: 100
+
+methods: [supervised_only, self_training, label_propagation, reweighted_self_training]

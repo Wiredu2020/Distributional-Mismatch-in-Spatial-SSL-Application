@@ -1,0 +1,24 @@
+# Real-world benchmark: USDA county-level poverty/income/education
+# (manuscript methods.tex Sec. 2.2.3, "Urban socio-economic modelling").
+# Region = US state; mismatch severity = number of source states the
+# labelled set is drawn from.
+
+output_csv: results/socioeconomic_experiment.csv
+data_dir: data/real_world/socioeconomic
+dataset: socioeconomic
+
+regions:
+  train_fraction: 0.7   # ~35 of 50 states used as "training" regions
+  split_seed: 0
+  candidate_per_region: 40
+  n_unlabelled: 400
+  n_test_in: 200
+  n_test_out: 200
+  pool_seed: 0
+
+sweep:
+  mismatch_alpha: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+  seeds: [0, 1, 2]
+  n_labelled: 50
+
+methods: [supervised_only, self_training, label_propagation, reweighted_self_training]
