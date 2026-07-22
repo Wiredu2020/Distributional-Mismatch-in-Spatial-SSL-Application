@@ -85,13 +85,30 @@ def _make_wilds_split(dcfg: dict):
         n_test_out=wcfg["n_test_out"], seed=wcfg["pool_seed"],
     )
     needed = all_pool_indices(pools)
-    missing = [i for i in needed if not (data_dir / "images" / f"landsat_poverty_img_{i}.npz").exists()]
-    if missing:
-        raise FileNotFoundError(f"{len(missing)}/{len(needed)} WILDS pool images not downloaded yet.")
+
+    # If a precomputed feature cache is present (built once locally via
+    # `build_feature_matrix` and saved as .npz -- see the WILDS notebook),
+    # use it instead of requiring the raw ~1.1GB image archive on disk. This
+    # is what lets a sweep run in an environment (e.g. a Colab GPU session)
+    # that only has the small metadata CSV and this cache uploaded, not the
+    # full image cache.
+    cache_path = data_dir / f"feature_cache_fold{wcfg['fold']}_cpc{wcfg['candidate_per_country']}_" \
+        f"u{wcfg['n_unlabelled']}_ti{wcfg['n_test_in']}_to{wcfg['n_test_out']}_ps{wcfg['pool_seed']}.npz"
+    if cache_path.exists():
+        cached = np.load(cache_path)
+        X_cache, valid_idx = cached["X_cache"], cached["valid_idx"]
+        missing = [i for i in needed if i not in set(valid_idx.tolist())]
+        if missing:
+            raise FileNotFoundError(f"{len(missing)}/{len(needed)} WILDS pool indices missing from cache "
+                                     f"{cache_path}; regenerate it for this config.")
+    else:
+        missing = [i for i in needed if not (data_dir / "images" / f"landsat_poverty_img_{i}.npz").exists()]
+        if missing:
+            raise FileNotFoundError(f"{len(missing)}/{len(needed)} WILDS pool images not downloaded yet.")
+        X_cache, valid_idx = build_feature_matrix(needed, data_dir)
 
     wealth_median = metadata["wealthpooled"].median()
     y_all = (metadata["wealthpooled"] > wealth_median).astype(int)
-    X_cache, valid_idx = build_feature_matrix(needed, data_dir)
     idx_to_row = {int(idx): row for row, idx in enumerate(valid_idx)}
     X_reduced, _pca = reduce_dimensionality(_standardize(X_cache), n_components=dcfg.get("n_pca_components", 5))
     coords_all = metadata[["lat", "lon"]].to_numpy()
@@ -210,21 +227,40 @@ def run_dataset_sweep(dataset_name: str, get_split, sweep: dict, methods: list[s
     return pd.DataFrame(rows)
 
 
-def run(config_path: str) -> pd.DataFrame:
+def run(config_path: str, resume: bool = True) -> pd.DataFrame:
+    """Runs every dataset in the config's sweep and concatenates the result,
+    exactly as before. Additionally, when `resume=True` (the default), each
+    dataset's rows are checkpointed to `<output_csv>.<dataset_name>.partial.csv`
+    immediately after that dataset finishes, and a dataset whose partial file
+    already exists is loaded from disk instead of re-run -- so a crash or a
+    dropped connection partway through a long multi-dataset sweep (e.g. a
+    remote GPU session) only costs the currently in-progress dataset, not
+    every dataset already completed. Partial files are left in place after a
+    successful run; delete them manually to force a full re-run.
+    """
     with open(config_path) as f:
         cfg = yaml.safe_load(f)
 
+    out_path = REPO_ROOT / cfg["output_csv"]
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
     all_frames = []
     for dataset_name, dcfg in cfg["datasets"].items():
-        print(f"=== {dataset_name} ===", file=sys.stderr)
-        get_split = _SPLIT_FACTORIES[dataset_name](dcfg)
-        methods = dcfg.get("methods", cfg["methods"])
-        df = run_dataset_sweep(dataset_name, get_split, cfg["sweep"], methods)
+        partial_path = out_path.with_suffix(f".{dataset_name}.partial.csv")
+        if resume and partial_path.exists():
+            print(f"=== {dataset_name} (loaded from checkpoint {partial_path}) ===", file=sys.stderr)
+            df = pd.read_csv(partial_path)
+        else:
+            print(f"=== {dataset_name} ===", file=sys.stderr)
+            get_split = _SPLIT_FACTORIES[dataset_name](dcfg)
+            methods = dcfg.get("methods", cfg["methods"])
+            df = run_dataset_sweep(dataset_name, get_split, cfg["sweep"], methods)
+            if resume:
+                df.to_csv(partial_path, index=False)
+                print(f"Checkpointed {dataset_name} to {partial_path}", file=sys.stderr)
         all_frames.append(df)
 
     results = pd.concat(all_frames, ignore_index=True)
-    out_path = REPO_ROOT / cfg["output_csv"]
-    out_path.parent.mkdir(parents=True, exist_ok=True)
     results.to_csv(out_path, index=False)
     print(f"Saved {len(results)} rows to {out_path}", file=sys.stderr)
     return results

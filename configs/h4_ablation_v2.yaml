@@ -1,0 +1,76 @@
+# H4 ablation study (supervisor-revision round): isolates which component of
+# the distribution-aware framework (methods.tex Section 2.6) -- spatial
+# weighting, adaptive pseudo-labelling, or their combination -- is
+# responsible for the full three-component framework performing *worse*
+# than re-weighting alone (supplementary.tex Section S2.1's open question).
+# Same 5 datasets and dataset params as spatial_methods_comparison.yaml,
+# scaled to 20 seeds (statistical-rigor fix) and restricted to plain
+# self-training plus the four distribution-aware variants.
+
+output_csv: results/h4_ablation_v2.csv
+
+sweep:
+  mismatch_alpha: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+
+methods: [self_training, reweighted_self_training, reweighted_spatial_self_training,
+          reweighted_adaptive_self_training, full_distribution_aware]
+
+datasets:
+  synthetic:
+    dataset:
+      lengthscale: 0.08
+      nonstationarity_strength: 0.0
+      n_labelled: 150
+      n_unlabelled: 600
+      n_test_in: 300
+      n_test_out: 300
+
+  wilds:
+    data_dir: data/wilds_povertymap
+    n_pca_components: 5
+    sweep_n_labelled: 60
+    wilds:
+      fold: A
+      candidate_per_country: 90
+      n_unlabelled: 300
+      n_test_in: 150
+      n_test_out: 150
+      pool_seed: 0
+
+  housing:
+    data_dir: data/real_world/housing
+    sweep_n_labelled: 100
+    regions:
+      train_fraction: 0.7
+      split_seed: 0
+      candidate_per_region: 250
+      n_unlabelled: 600
+      n_test_in: 300
+      n_test_out: 300
+      pool_seed: 0
+
+  socioeconomic:
+    data_dir: data/real_world/socioeconomic
+    sweep_n_labelled: 50
+    regions:
+      train_fraction: 0.7
+      split_seed: 0
+      candidate_per_region: 40
+      n_unlabelled: 400
+      n_test_in: 200
+      n_test_out: 200
+      pool_seed: 0
+
+  air_quality:
+    data_dir: data/real_world/air_quality
+    socioeconomic_data_dir: data/real_world/socioeconomic
+    sweep_n_labelled: 20
+    regions:
+      train_fraction: 0.7
+      split_seed: 0
+      candidate_per_region: 12
+      n_unlabelled: 150
+      n_test_in: 70
+      n_test_out: 70
+      pool_seed: 0

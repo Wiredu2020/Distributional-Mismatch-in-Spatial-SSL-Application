@@ -17,6 +17,8 @@ import numpy as np
 import torch
 from torch import nn
 
+from ssl_spatial.models._device import DEVICE
+
 
 class _MLP(nn.Module):
     def __init__(self, n_features: int, hidden: int = 32):
@@ -41,8 +43,8 @@ class _TorchClassifierWrapper:
 
     def predict_proba(self, X: np.ndarray) -> np.ndarray:
         with torch.no_grad():
-            logits = self.model(torch.as_tensor(X, dtype=torch.float32))
-            p1 = torch.sigmoid(logits).numpy()
+            logits = self.model(torch.as_tensor(X, dtype=torch.float32, device=DEVICE))
+            p1 = torch.sigmoid(logits).cpu().numpy()
         return np.column_stack([1 - p1, p1])
 
     def predict(self, X: np.ndarray) -> np.ndarray:
@@ -63,14 +65,14 @@ def fit_mean_teacher(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarray, seed: in
                       ema_decay: float = 0.97, consistency_max: float = 1.0, **kwargs):
     torch.manual_seed(seed)
     n_features = X_l.shape[1]
-    student = _MLP(n_features)
+    student = _MLP(n_features).to(DEVICE)
     teacher = copy.deepcopy(student)
     for p in teacher.parameters():
         p.requires_grad_(False)
 
-    X_l_t = torch.as_tensor(X_l, dtype=torch.float32)
-    y_l_t = torch.as_tensor(y_l, dtype=torch.float32)
-    X_u_t = torch.as_tensor(X_u, dtype=torch.float32) if len(X_u) else None
+    X_l_t = torch.as_tensor(X_l, dtype=torch.float32, device=DEVICE)
+    y_l_t = torch.as_tensor(y_l, dtype=torch.float32, device=DEVICE)
+    X_u_t = torch.as_tensor(X_u, dtype=torch.float32, device=DEVICE) if len(X_u) else None
 
     opt = torch.optim.Adam(student.parameters(), lr=lr)
     bce = nn.BCEWithLogitsLoss()
@@ -106,11 +108,11 @@ def fit_fixmatch(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarray, seed: int = 
                   lambda_u: float = 1.0, **kwargs):
     torch.manual_seed(seed)
     n_features = X_l.shape[1]
-    model = _MLP(n_features)
+    model = _MLP(n_features).to(DEVICE)
 
-    X_l_t = torch.as_tensor(X_l, dtype=torch.float32)
-    y_l_t = torch.as_tensor(y_l, dtype=torch.float32)
-    X_u_t = torch.as_tensor(X_u, dtype=torch.float32) if len(X_u) else None
+    X_l_t = torch.as_tensor(X_l, dtype=torch.float32, device=DEVICE)
+    y_l_t = torch.as_tensor(y_l, dtype=torch.float32, device=DEVICE)
+    X_u_t = torch.as_tensor(X_u, dtype=torch.float32, device=DEVICE) if len(X_u) else None
 
     opt = torch.optim.Adam(model.parameters(), lr=lr)
     bce = nn.BCEWithLogitsLoss()

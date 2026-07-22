@@ -33,6 +33,8 @@ METHOD_FAMILIES = {
     "baselines": ["supervised_only", "self_training", "label_propagation", "reweighted_self_training"],
     "modern_ssl": ["self_training", "mean_teacher", "fixmatch"],
     "spatial": ["supervised_only", "gcn", "spatial_gnn", "gnnwr", "geostatistical_ssl"],
+    "h4_ablation": ["self_training", "reweighted_self_training", "reweighted_spatial_self_training",
+                    "reweighted_adaptive_self_training", "full_distribution_aware"],
 }
 
 METHOD_LABELS = {
@@ -46,6 +48,10 @@ METHOD_LABELS = {
     "spatial_gnn": "Spatial GNN",
     "gnnwr": "GNNWR",
     "geostatistical_ssl": "Geostatistical SSL (Fouedjio)",
+    "reweighted_spatial_self_training": "+ spatial weighting",
+    "reweighted_adaptive_self_training": "+ adaptive threshold",
+    "full_distribution_aware": "Full framework (all three)",
+    "domain_adversarial_ssl": "Domain-adversarial SSL",
 }
 
 # One fixed colour per method, assigned from the 8-slot palette in a stable
@@ -62,6 +68,10 @@ METHOD_COLORS = {
     "spatial_gnn": PALETTE[7],
     "gnnwr": PALETTE[4],
     "geostatistical_ssl": PALETTE[5],
+    "reweighted_spatial_self_training": PALETTE[6],
+    "reweighted_adaptive_self_training": PALETTE[7],
+    "full_distribution_aware": PALETTE[5],
+    "domain_adversarial_ssl": PALETTE[0],
 }
 
 METHOD_MARKERS = {
@@ -75,6 +85,10 @@ METHOD_MARKERS = {
     "spatial_gnn": "D",
     "gnnwr": "v",
     "geostatistical_ssl": "P",
+    "reweighted_spatial_self_training": "*",
+    "reweighted_adaptive_self_training": "h",
+    "full_distribution_aware": "X",
+    "domain_adversarial_ssl": "p",
 }
 
 

@@ -26,6 +26,8 @@ import numpy as np
 import torch
 from torch import nn
 
+from ssl_spatial.models._device import DEVICE
+
 
 def _knn_adjacency(coords: np.ndarray, k: int = 10, weighted: bool = False,
                     bandwidth: float | None = None) -> np.ndarray:
@@ -93,11 +95,11 @@ def fit_predict_graph_ssl(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarray,
     coords_all = np.vstack([coords_l, coords_u, coords_test_in, coords_test_out])
 
     A = _knn_adjacency(coords_all, k=k, weighted=edge_weighted)
-    A_norm = torch.as_tensor(_normalise_adjacency(A), dtype=torch.float32)
-    X_all_t = torch.as_tensor(X_all, dtype=torch.float32)
-    y_l_t = torch.as_tensor(y_l, dtype=torch.float32)
+    A_norm = torch.as_tensor(_normalise_adjacency(A), dtype=torch.float32, device=DEVICE)
+    X_all_t = torch.as_tensor(X_all, dtype=torch.float32, device=DEVICE)
+    y_l_t = torch.as_tensor(y_l, dtype=torch.float32, device=DEVICE)
 
-    model = _GCN(X_all.shape[1], hidden=hidden)
+    model = _GCN(X_all.shape[1], hidden=hidden).to(DEVICE)
     opt = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     bce = nn.BCEWithLogitsLoss()
 
@@ -111,7 +113,7 @@ def fit_predict_graph_ssl(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarray,
 
     model.eval()
     with torch.no_grad():
-        proba_all = torch.sigmoid(model(X_all_t, A_norm)).numpy()
+        proba_all = torch.sigmoid(model(X_all_t, A_norm)).cpu().numpy()
 
     proba_test_in = proba_all[n_l + n_u: n_l + n_u + n_ti]
     proba_test_out = proba_all[n_l + n_u + n_ti:]

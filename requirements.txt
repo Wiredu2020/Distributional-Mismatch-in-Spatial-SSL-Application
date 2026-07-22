@@ -8,3 +8,8 @@ python-docx
 wilds
 requests
 jupyter
+torch
+gstools
+pwlf
+urllib3
+openpyxl

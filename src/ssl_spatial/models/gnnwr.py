@@ -30,6 +30,8 @@ import numpy as np
 import torch
 from torch import nn
 
+from ssl_spatial.models._device import DEVICE
+
 
 class _SWNN(nn.Module):
     """Maps a relative spatial position (query - reference) to a
@@ -67,7 +69,7 @@ class _GNNWRWrapper:
             weights = self.swnn(rel)  # (n_query, n_l)
             weights = weights / (weights.sum(dim=1, keepdim=True) + 1e-8)
             proba = weights @ self.y_l
-        return proba.numpy()
+        return proba.cpu().numpy()
 
 
 def fit_predict_gnnwr(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarray,
@@ -82,14 +84,14 @@ def fit_predict_gnnwr(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarray,
     a uniform comparison interface (`ssl_spatial.models.method_registry`).
     """
     torch.manual_seed(seed)
-    swnn = _SWNN(hidden=hidden)
+    swnn = _SWNN(hidden=hidden).to(DEVICE)
     opt = torch.optim.Adam(swnn.parameters(), lr=lr)
     bce = nn.BCELoss()
 
-    coords_l_t = torch.as_tensor(coords_l, dtype=torch.float32)
-    y_l_t = torch.as_tensor(y_l, dtype=torch.float32)
+    coords_l_t = torch.as_tensor(coords_l, dtype=torch.float32, device=DEVICE)
+    y_l_t = torch.as_tensor(y_l, dtype=torch.float32, device=DEVICE)
     n_l = len(y_l)
-    eye_mask = ~torch.eye(n_l, dtype=torch.bool)  # leave-one-out during training
+    eye_mask = ~torch.eye(n_l, dtype=torch.bool, device=DEVICE)  # leave-one-out during training
 
     for _ in range(n_epochs):
         swnn.train()
@@ -104,8 +106,8 @@ def fit_predict_gnnwr(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarray,
         opt.step()
 
     model = _GNNWRWrapper(swnn, coords_l_t, y_l_t)
-    proba_in = model._predict_proba_at(torch.as_tensor(coords_test_in, dtype=torch.float32))
-    proba_out = model._predict_proba_at(torch.as_tensor(coords_test_out, dtype=torch.float32))
+    proba_in = model._predict_proba_at(torch.as_tensor(coords_test_in, dtype=torch.float32, device=DEVICE))
+    proba_out = model._predict_proba_at(torch.as_tensor(coords_test_out, dtype=torch.float32, device=DEVICE))
     return proba_in, proba_out
 
 

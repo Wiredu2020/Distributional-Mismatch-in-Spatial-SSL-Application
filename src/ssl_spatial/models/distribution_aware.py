@@ -114,25 +114,29 @@ def _adaptive_thresholds(coords_pool: np.ndarray, coords_l: np.ndarray, base_thr
     return np.clip(thresholds, 0.5, 0.97)
 
 
-def fit_full_distribution_aware(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarray, seed: int = 0,
-                                 coords_l: np.ndarray | None = None, coords_u: np.ndarray | None = None,
-                                 threshold: float = 0.75, threshold_bonus: float = 0.15,
-                                 max_iter: int = 10, **kwargs):
-    """The distribution-aware framework's three components layered on
-    self-training (manuscript methods.tex Section 2.6): density-ratio
-    re-weighting (as in `fit_reweighted_self_training`), a spatial
-    weighting mechanism (`estimate_spatial_relevance_weights`), and
-    adaptive pseudo-labelling (`_adaptive_thresholds`). Falls back to
-    `fit_reweighted_self_training` if coordinates are not supplied, since
-    the spatial components have nothing to act on without them.
+def _fit_distribution_aware_variant(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarray, seed: int,
+                                     coords_l: np.ndarray, coords_u: np.ndarray,
+                                     use_spatial_weighting: bool, use_adaptive_threshold: bool,
+                                     threshold: float = 0.75, threshold_bonus: float = 0.15,
+                                     max_iter: int = 10):
+    """Shared self-training loop for every coordinate-aware distribution-aware
+    variant, parameterised by which of the two spatial components (spatial
+    weighting, adaptive pseudo-labelling threshold) are switched on. Density-
+    ratio re-weighting is always applied -- it is the framework's base
+    component (Section 2.6) that every variant builds on. Used directly by
+    `fit_full_distribution_aware` (both components on) and by the two
+    ablation variants below (exactly one component on), so the H4 ablation
+    isolates which added component is responsible for the full framework's
+    regression relative to re-weighting alone (Supplementary Material
+    Section S2.1's open question).
     """
-    if coords_l is None or coords_u is None:
-        return fit_reweighted_self_training(X_l, y_l, X_u, seed=seed, threshold=threshold, max_iter=max_iter)
-
     density_weights = estimate_density_ratio_weights(X_l, X_u, seed=seed)
-    spatial_weights = estimate_spatial_relevance_weights(coords_l, coords_u)
-    combined_weights = density_weights * spatial_weights
-    combined_weights = combined_weights / (combined_weights.mean() + 1e-12)
+    if use_spatial_weighting:
+        spatial_weights = estimate_spatial_relevance_weights(coords_l, coords_u)
+        combined_weights = density_weights * spatial_weights
+        combined_weights = combined_weights / (combined_weights.mean() + 1e-12)
+    else:
+        combined_weights = density_weights
 
     X_train, y_train, w_train = X_l.copy(), y_l.copy(), combined_weights.copy()
     X_pool, coords_pool = X_u.copy(), coords_u.copy()
@@ -147,8 +151,11 @@ def fit_full_distribution_aware(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarra
         confidence = proba.max(axis=1)
         predictions = clf.classes_[proba.argmax(axis=1)]
 
-        per_point_threshold = _adaptive_thresholds(coords_pool, coords_train, threshold, threshold_bonus)
-        accept = confidence >= per_point_threshold
+        if use_adaptive_threshold:
+            accept_threshold = _adaptive_thresholds(coords_pool, coords_train, threshold, threshold_bonus)
+        else:
+            accept_threshold = threshold
+        accept = confidence >= accept_threshold
         if not np.any(accept):
             break
 
@@ -161,12 +168,74 @@ def fit_full_distribution_aware(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarra
     return clf
 
 
+def fit_full_distribution_aware(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarray, seed: int = 0,
+                                 coords_l: np.ndarray | None = None, coords_u: np.ndarray | None = None,
+                                 threshold: float = 0.75, threshold_bonus: float = 0.15,
+                                 max_iter: int = 10, **kwargs):
+    """The distribution-aware framework's three components layered on
+    self-training (manuscript methods.tex Section 2.6): density-ratio
+    re-weighting (as in `fit_reweighted_self_training`), a spatial
+    weighting mechanism (`estimate_spatial_relevance_weights`), and
+    adaptive pseudo-labelling (`_adaptive_thresholds`). Falls back to
+    `fit_reweighted_self_training` if coordinates are not supplied, since
+    the spatial components have nothing to act on without them.
+    """
+    if coords_l is None or coords_u is None:
+        return fit_reweighted_self_training(X_l, y_l, X_u, seed=seed, threshold=threshold, max_iter=max_iter)
+    return _fit_distribution_aware_variant(
+        X_l, y_l, X_u, seed, coords_l, coords_u,
+        use_spatial_weighting=True, use_adaptive_threshold=True,
+        threshold=threshold, threshold_bonus=threshold_bonus, max_iter=max_iter,
+    )
+
+
+def fit_reweighted_spatial_self_training(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarray, seed: int = 0,
+                                          coords_l: np.ndarray | None = None, coords_u: np.ndarray | None = None,
+                                          threshold: float = 0.75, max_iter: int = 10, **kwargs):
+    """H4 ablation variant: density-ratio re-weighting + spatial weighting,
+    WITHOUT adaptive pseudo-labelling. Isolates whether spatial weighting
+    alone (rather than its combination with the adaptive threshold) accounts
+    for the full framework's regression relative to re-weighting alone.
+    Falls back to `fit_reweighted_self_training` if coordinates are absent.
+    """
+    if coords_l is None or coords_u is None:
+        return fit_reweighted_self_training(X_l, y_l, X_u, seed=seed, threshold=threshold, max_iter=max_iter)
+    return _fit_distribution_aware_variant(
+        X_l, y_l, X_u, seed, coords_l, coords_u,
+        use_spatial_weighting=True, use_adaptive_threshold=False,
+        threshold=threshold, max_iter=max_iter,
+    )
+
+
+def fit_reweighted_adaptive_self_training(X_l: np.ndarray, y_l: np.ndarray, X_u: np.ndarray, seed: int = 0,
+                                           coords_l: np.ndarray | None = None, coords_u: np.ndarray | None = None,
+                                           threshold: float = 0.75, threshold_bonus: float = 0.15,
+                                           max_iter: int = 10, **kwargs):
+    """H4 ablation variant: density-ratio re-weighting + adaptive
+    pseudo-labelling threshold, WITHOUT spatial weighting. Isolates whether
+    the adaptive threshold alone accounts for the full framework's
+    regression relative to re-weighting alone. Falls back to
+    `fit_reweighted_self_training` if coordinates are absent.
+    """
+    if coords_l is None or coords_u is None:
+        return fit_reweighted_self_training(X_l, y_l, X_u, seed=seed, threshold=threshold, max_iter=max_iter)
+    return _fit_distribution_aware_variant(
+        X_l, y_l, X_u, seed, coords_l, coords_u,
+        use_spatial_weighting=False, use_adaptive_threshold=True,
+        threshold=threshold, threshold_bonus=threshold_bonus, max_iter=max_iter,
+    )
+
+
 DISTRIBUTION_AWARE_METHODS = {
     "reweighted_self_training": fit_reweighted_self_training,
+    "reweighted_spatial_self_training": fit_reweighted_spatial_self_training,
+    "reweighted_adaptive_self_training": fit_reweighted_adaptive_self_training,
     "full_distribution_aware": fit_full_distribution_aware,
 }
 
 __all__ = [
     "estimate_density_ratio_weights", "estimate_spatial_relevance_weights",
-    "fit_reweighted_self_training", "fit_full_distribution_aware", "DISTRIBUTION_AWARE_METHODS",
+    "fit_reweighted_self_training", "fit_reweighted_spatial_self_training",
+    "fit_reweighted_adaptive_self_training", "fit_full_distribution_aware",
+    "DISTRIBUTION_AWARE_METHODS",
 ]

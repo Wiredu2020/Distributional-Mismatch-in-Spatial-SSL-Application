@@ -1,0 +1,32 @@
+# WILDS PovertyMap benchmark -- statistical-rigor revision (supervisor
+# review): identical to configs/wilds_benchmark.yaml (manuscript Table 4)
+# except scaled from 3 to 20 seeds.
+
+output_csv: results/wilds_povertymap_experiment_v2.csv
+data_dir: data/wilds_povertymap
+
+wilds:
+  fold: A
+  candidate_per_country: 90
+  n_unlabelled: 300
+  n_test_in: 150
+  n_test_out: 150
+  pool_seed: 0
+
+sweep:
+  mismatch_alpha: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+  n_labelled: 60
+
+methods: [supervised_only, self_training, label_propagation]
+
+n_pca_components: 5
+
+divergence:
+  n_bins: 5
+  min_count: 5
+
+download:
+  max_workers: 6
+  max_retries: 5
+  timeout: 30.0

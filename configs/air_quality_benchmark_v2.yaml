@@ -1,0 +1,24 @@
+# EPA AQS air-quality benchmark -- statistical-rigor revision (supervisor
+# review): identical to configs/air_quality_benchmark.yaml (manuscript
+# Table 5) except scaled from 3 to 20 seeds.
+
+output_csv: results/air_quality_experiment_v2.csv
+data_dir: data/real_world/air_quality
+socioeconomic_data_dir: data/real_world/socioeconomic
+dataset: air_quality
+
+regions:
+  train_fraction: 0.7
+  split_seed: 0
+  candidate_per_region: 12
+  n_unlabelled: 150
+  n_test_in: 70
+  n_test_out: 70
+  pool_seed: 0
+
+sweep:
+  mismatch_alpha: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+  n_labelled: 20
+
+methods: [supervised_only, self_training, label_propagation, reweighted_self_training]

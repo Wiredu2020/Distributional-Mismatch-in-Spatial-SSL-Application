@@ -26,9 +26,11 @@ from ssl_spatial.models.distribution_aware import DISTRIBUTION_AWARE_METHODS
 from ssl_spatial.models.geostatistical import GEOSTATISTICAL_METHODS
 from ssl_spatial.models.gnnwr import GNNWR_METHODS
 from ssl_spatial.models.graph_ssl import GRAPH_METHODS
+from ssl_spatial.models.neural_distribution_aware import NEURAL_DISTRIBUTION_AWARE_METHODS
 from ssl_spatial.models.neural_ssl import NEURAL_SSL_METHODS
 
-_SKLEARN_STYLE = {**BASELINE_METHODS, **DISTRIBUTION_AWARE_METHODS, **NEURAL_SSL_METHODS}
+_SKLEARN_STYLE = {**BASELINE_METHODS, **DISTRIBUTION_AWARE_METHODS, **NEURAL_SSL_METHODS,
+                  **NEURAL_DISTRIBUTION_AWARE_METHODS}
 
 
 def _make_sklearn_adapter(fit_fn):
