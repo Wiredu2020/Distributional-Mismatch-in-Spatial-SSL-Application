@@ -77,19 +77,19 @@ def bootstrap_ci_drop(df: pd.DataFrame, group_cols: list[str], value_col: str, a
 
 def bootstrap_ci_correlation(df: pd.DataFrame, x_col: str, y_col: str,
                               seed_col: str = "seed", n_boot: int = 200,
-                              seed: int = 0) -> tuple[float, float, float]:
-    """95% seed-cluster bootstrap CI around the pooled Pearson correlation
-    between `x_col` and `y_col` (e.g. a divergence metric vs out-of-region
-    accuracy across all synthetic runs). The point estimate is the same
-    naive pooled correlation reported in the manuscript's Table 2; the CI
-    makes explicit how much of that apparent precision survives once the
-    seed/lengthscale/nonstationarity nesting is accounted for, rather than
-    treating all rows as independent observations.
+                              seed: int = 0, method: str = "pearson") -> tuple[float, float, float]:
+    """95% seed-cluster bootstrap CI around the pooled correlation between
+    `x_col` and `y_col` (e.g. a divergence metric vs out-of-region accuracy
+    across all synthetic runs). `method` is passed straight to
+    `DataFrame.corr` ("pearson" or "spearman"); the CI makes explicit how
+    much of the apparent precision survives once the seed/lengthscale/
+    nonstationarity nesting is accounted for, rather than treating all rows
+    as independent observations.
     """
-    point = float(df[[x_col, y_col]].corr().iloc[0, 1])
+    point = float(df[[x_col, y_col]].corr(method=method).iloc[0, 1])
     boots = []
     for resampled in _seed_resamples(df, seed_col, n_boot, seed):
-        r = resampled[[x_col, y_col]].corr().iloc[0, 1]
+        r = resampled[[x_col, y_col]].corr(method=method).iloc[0, 1]
         if np.isfinite(r):
             boots.append(r)
     lo, hi = np.percentile(boots, [2.5, 97.5])

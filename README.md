@@ -207,56 +207,8 @@ PYTHONPATH=src python -m ssl_spatial.experiments.changepoint_analysis
 PYTHONPATH=src python -m ssl_spatial.experiments.localized_mmd_analysis
 ```
 
-## How the synthetic generator maps to the manuscript's concepts
 
-`SpatialSSLConfig` (`src/ssl_spatial/data/synthetic.py`) exposes three
-independently controllable axes:
 
-- **`mismatch_alpha`** — marginal distribution mismatch. Labelled data is
-  sampled from a Gaussian kernel concentrated at `label_anchor`; unlabelled/test
-  data is sampled uniformly over the domain. `alpha=0` reproduces the standard
-  SSL assumption of a shared marginal; `alpha=1` confines all labels to a small
-  sub-region, standing in for real sampling bias such as monitoring stations
-  clustered in urban cores.
-- **`nonstationarity_strength`** — spatial non-stationarity. The coefficient
-  linking covariates to the label varies smoothly across space, independent of
-  where data happens to be sampled — a concept-shift axis, kept analytically
-  distinct from the covariate-shift axis above.
-- **`lengthscale`** — spatial autocorrelation in the covariates (smoothed
-  random-field bandwidth).
-
-## Manuscript
-
-The current manuscript lives in [`manuscript/main/`](manuscript/main/):
-
-- [`main.tex`](manuscript/main/main.tex) — Introduction, Related Work, Problem
-  Formulation, the three-baseline results, Discussion, and Conclusion.
-- [`supplementary.tex`](manuscript/main/supplementary.tex) — full specification
-  and results for the seven extended SSL methods, the three-component
-  distribution-aware framework, and the ten-method comparative study
-  (Sections S1–S2).
-
-Earlier section-by-section drafts (`draft1`–`draft3`, `methods_draft*.tex`,
-`results_draft*.tex`, etc.) are kept at the top level of `manuscript/` as a
-record of how the study grew from the synthetic pilot, to WILDS validation, to
-the full real-world and comparative-methods study now consolidated in
-`manuscript/main/`.
-
-## Not yet built (next phases)
-
-- **Formal indicator/plurigaussian simulation** for the geostatistical method,
-  in place of the thresholded Gaussian-conditioned approximation used here.
-- **Full weighted-least-squares GNNWR**, rather than the simplified locally
-  weighted average used to keep the ten-method comparison CPU-tractable.
-- **Domain-specific augmentation** for Mean Teacher and FixMatch, in place of
-  additive Gaussian noise (no canonical augmentation analogue exists yet for
-  numeric spatial covariates).
-- **fMoW** — the second WILDS task with a geographic split; PovertyMap was
-  chosen instead for tractability given fMoW's much larger archive.
-- **Adaptive/kernel-weighted divergence estimator refinements** — the housing
-  dataset's population-weighting failure mode (Section 4.6 of the main text)
-  suggests the correction generalises beyond the localised estimator to any
-  divergence computed over an unevenly represented population.
 
 ## Citation
 
