@@ -12,22 +12,43 @@ Titles are kept short (a noun phrase, not a full descriptive sentence); the
 descriptive context that used to live in the in-plot title belongs in the
 LaTeX figure caption instead, matching how figures are captioned in the
 Fouedjio/Talebi paper this study extends (`Papers/`).
+
+Reviewer fix (colour/typography pass requested on Figures 6 and 9 of
+`manuscript/main/main.tex`, generalised to every figure in `figures/`): the
+background is pure white rather than the previous off-white `#fcfcfb`
+(which some PDF viewers/exporters render with a warm cast), the categorical
+palette is Okabe & Ito's (2002) CVD-safe set rather than the previous
+hand-picked one (`scripts/check_cvd_palette.py` simulates protanopia,
+deuteranopia, and tritanopia on every colour combination that actually
+co-occurs on one axis via `METHOD_FAMILIES`, and confirms the only residual
+close pair -- blue/bluish-green under the rare tritanopia -- is disambiguated
+by `METHOD_MARKERS`' distinct marker shapes), and every text element is
+sized for print rather than screen.
 """
 from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-SURFACE = "#fcfcfb"
+SURFACE = "#ffffff"
 INK_PRIMARY = "#0b0b0b"
-INK_SECONDARY = "#52514e"
-INK_MUTED = "#898781"
-GRIDLINE = "#e1e0d9"
-BASELINE_COLOR = "#c3c2b7"
+INK_SECONDARY = "#3a3a3a"
+INK_MUTED = "#5c5c5c"
+GRIDLINE = "#dddddd"
+BASELINE_COLOR = "#9a9a9a"
 
-# Validated 8-slot categorical palette (light mode), fixed order.
-PALETTE = ["#2a78d6", "#1baf7a", "#eda100", "#008300",
-           "#4a3aa7", "#e34948", "#e87ba4", "#eb6834"]
+# Print-oriented type scale shared by every figure (points).
+FONT_TITLE = 15
+FONT_LABEL = 13
+FONT_TICK = 12
+FONT_LEGEND = 11
+FONT_PANEL_LABEL = 16
+
+# Okabe & Ito (2002) CVD-safe 8-colour categorical palette, fixed order.
+# Verified with scripts/check_cvd_palette.py against every method subset
+# that is actually plotted together (see module docstring).
+PALETTE = ["#0072B2", "#009E73", "#E69F00", "#D55E00",
+           "#CC79A7", "#56B4E9", "#F0E442", "#000000"]
 
 METHOD_FAMILIES = {
     "baselines": ["supervised_only", "self_training", "label_propagation", "reweighted_self_training"],
@@ -69,7 +90,7 @@ METHOD_COLORS = {
     "gnnwr": PALETTE[4],
     "geostatistical_ssl": PALETTE[5],
     "reweighted_spatial_self_training": PALETTE[6],
-    "reweighted_adaptive_self_training": PALETTE[7],
+    "reweighted_adaptive_self_training": PALETTE[0],
     "full_distribution_aware": PALETTE[5],
     "domain_adversarial_ssl": PALETTE[0],
 }
@@ -98,7 +119,7 @@ def style_axes(ax) -> None:
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_color(BASELINE_COLOR)
     ax.spines["bottom"].set_color(BASELINE_COLOR)
-    ax.tick_params(colors=INK_MUTED, labelsize=9)
+    ax.tick_params(colors=INK_MUTED, labelsize=FONT_TICK)
     ax.yaxis.grid(True, color=GRIDLINE, linewidth=1, zorder=0)
     ax.set_axisbelow(True)
 
@@ -117,19 +138,31 @@ def plot_method_lines(ax, df, x_col: str, y_col: str, methods: list[str], legend
     """
     for method in methods:
         g = df[df["method"] == method].groupby(x_col)[y_col].mean()
-        ax.plot(g.index, g.values, marker=METHOD_MARKERS[method], markersize=5, linewidth=1.8,
+        ax.plot(g.index, g.values, marker=METHOD_MARKERS[method], markersize=6, linewidth=2.0,
                 color=METHOD_COLORS[method], label=METHOD_LABELS[method], zorder=3)
     if legend:
-        ax.legend(frameon=False, fontsize=8, labelcolor=INK_SECONDARY)
+        ax.legend(frameon=False, fontsize=FONT_LEGEND, labelcolor=INK_SECONDARY)
+
+
+def panel_label(ax, letter: str) -> None:
+    """Draw a bold "(a)"-style panel label at the top-left of `ax`, in axes
+    coordinates so it sits consistently outside the plotted data regardless
+    of that panel's data range. Used in place of prose like "(left)"/
+    "(right)" so every multi-panel figure in the paper shares one caption
+    convention (a), (b), (c), ...
+    """
+    ax.text(-0.14, 1.10, f"({letter})", transform=ax.transAxes, fontsize=FONT_PANEL_LABEL,
+             fontweight="bold", color=INK_PRIMARY, va="top", ha="left")
 
 
 def savefig(fig, path) -> None:
     fig.tight_layout()
-    fig.savefig(path, dpi=150, facecolor=SURFACE, bbox_inches="tight")
+    fig.savefig(path, dpi=200, facecolor=SURFACE, bbox_inches="tight")
 
 
 __all__ = [
     "SURFACE", "INK_PRIMARY", "INK_SECONDARY", "INK_MUTED", "GRIDLINE", "BASELINE_COLOR",
+    "FONT_TITLE", "FONT_LABEL", "FONT_TICK", "FONT_LEGEND", "FONT_PANEL_LABEL",
     "PALETTE", "METHOD_FAMILIES", "METHOD_LABELS", "METHOD_COLORS", "METHOD_MARKERS",
-    "style_axes", "new_figure", "plot_method_lines", "savefig",
+    "style_axes", "new_figure", "plot_method_lines", "panel_label", "savefig",
 ]
