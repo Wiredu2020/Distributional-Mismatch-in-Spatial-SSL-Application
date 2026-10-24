@@ -1,0 +1,157 @@
+[
+  {
+    "path": "results/h4_ablation_v2.csv",
+    "bytes": 677317,
+    "sha256": "a0701aaeebee00415392a0ce9a08e834f03b36640dd88cef2de80c4dc079f55c"
+  },
+  {
+    "path": "results/socioeconomic_experiment.csv",
+    "bytes": 15411,
+    "sha256": "a800f80f2d68313510f59fa02bfd7bf44328f84fd8ccc5ab52a6c213d41aee1e"
+  },
+  {
+    "path": "results/random_region_control.csv",
+    "bytes": 46376,
+    "sha256": "10cef51f03db0ab14cf6be329eef57af0fe82c405ea3dd6bd05b853c53e78d28"
+  },
+  {
+    "path": "results/neural_da_ssl_v2.csv",
+    "bytes": 533419,
+    "sha256": "f9a967b02eba1458c837708ac5536d57140d4475ab54d43b0a5882e72ac0b332"
+  },
+  {
+    "path": "results/spatial_methods_comparison.csv",
+    "bytes": 206770,
+    "sha256": "e751249042814e6ee8fa9fe5da31c0850401dca39029485223b74f88cfe5571a"
+  },
+  {
+    "path": "results/random_vs_anchor_comparison.csv",
+    "bytes": 6024,
+    "sha256": "a88c3125fc0c6e1f6582ddcc825c3b2fa3e86f666713d252a026cc717918e432"
+  },
+  {
+    "path": "results/controlled_experiment_v2.csv",
+    "bytes": 516188,
+    "sha256": "619aed4aa7a5aad41cc882e6e1484fd755af8d6be33ea3a72e03324328b86a9f"
+  },
+  {
+    "path": "results/localized_mmd_comparison.csv",
+    "bytes": 79829,
+    "sha256": "41bfa51b64d79cc75bad11107d3034443639cf4597fa052c91d462d0c81df462"
+  },
+  {
+    "path": "results/wilds_povertymap_experiment_v2.csv",
+    "bytes": 76061,
+    "sha256": "a7f6dcc6d6f17c2a79531ef0de9fec55cc14aa62caa5a6ac0c668bb44a06a1dc"
+  },
+  {
+    "path": "results/spatial_methods_comparison_v2.csv",
+    "bytes": 1296743,
+    "sha256": "25c22c623cf787bb813cfd9f98e37069b17f727ab300e6222717cc419db91d23"
+  },
+  {
+    "path": "results/housing_experiment_v2.csv",
+    "bytes": 107939,
+    "sha256": "8db16417a9c2192fe862ef5a4bc560467c7bb42e3857604085fcc9c689b1e3f7"
+  },
+  {
+    "path": "results/wilds_povertymap_experiment.csv",
+    "bytes": 11482,
+    "sha256": "844c552797292726430a62fbb1b4c2cf7ea01fe0b321327687093595d0e13074"
+  },
+  {
+    "path": "results/controlled_experiment_sensitivity.csv",
+    "bytes": 516188,
+    "sha256": "619aed4aa7a5aad41cc882e6e1484fd755af8d6be33ea3a72e03324328b86a9f"
+  },
+  {
+    "path": "results/housing_experiment.csv",
+    "bytes": 16130,
+    "sha256": "dc8b8cd4e40cb95082eccb1284209641be2b0214adccbe5db89244cd509ae709"
+  },
+  {
+    "path": "results/air_quality_experiment_v2.csv",
+    "bytes": 101242,
+    "sha256": "10877abcb9c6e9c40d9209cd7d5c7ab11335bf9c25ef5c8b078281373a4baad1"
+  },
+  {
+    "path": "results/localized_mmd_comparison_v2.csv",
+    "bytes": 532754,
+    "sha256": "4086215a8393e73e9a1d67172d8cfbb7267646ac400631b23f1e81cee6017176"
+  },
+  {
+    "path": "results/quick_robustness.csv",
+    "bytes": 13139,
+    "sha256": "a97edd261d38317db8c4cf883e6bb89cf73b077f11894113b657ed9e5034b12e"
+  },
+  {
+    "path": "results/wilds_povertymap_h4.csv",
+    "bytes": 15434,
+    "sha256": "b9b1047efc5694ea5a1042ea7ccb9e7271d1a4d456a36a5fc50654dffe84faa9"
+  },
+  {
+    "path": "results/controlled_experiment.csv",
+    "bytes": 77165,
+    "sha256": "30d61b99d97b58f1969b2a7a15fc3500eecbdbf9241a442a13e4383c32b54420"
+  },
+  {
+    "path": "results/socioeconomic_experiment_v2.csv",
+    "bytes": 101890,
+    "sha256": "fc1d5c6663016bbdc7e686e25f08d6a88ce64195d4088e124c1bb9ee34a40c3c"
+  },
+  {
+    "path": "results/unlabelled_mismatch_experiment.csv",
+    "bytes": 22155,
+    "sha256": "866979be5a1bf47141eb907aedea255360c0129762d6920110e2ed84b56f43de"
+  },
+  {
+    "path": "results/neural_da_ssl_v2_drop_ci.csv",
+    "bytes": 3031,
+    "sha256": "3c94bceebda56e54af58acf4b3fa854abd162c75851b04eee9f8523a1068d7fa"
+  },
+  {
+    "path": "results/h4_ablation_v2_drop_ci.csv",
+    "bytes": 4444,
+    "sha256": "f53ac25238765980292de992d8eab3a207eb1c13149125913c7ee2d23c172ad0"
+  },
+  {
+    "path": "results/changepoint_analysis.csv",
+    "bytes": 624,
+    "sha256": "c3d4f465efba5ecf2ab21c824727ac8b11a7a1df1c7008a06b0fd2cb9abfd04c"
+  },
+  {
+    "path": "results/per_severity_summary.csv",
+    "bytes": 4855,
+    "sha256": "b494f7550b1e87d6294ce0369a1b6d33ef95c753d808451f3820b76e732d793d"
+  },
+  {
+    "path": "results/localized_mmd_comparison_v2_spearman_ci.csv",
+    "bytes": 411,
+    "sha256": "290fd19ae30b2eeb9b652da20ad66bf9d6fec139c9231b4fab19016aade40f57"
+  },
+  {
+    "path": "results/controlled_experiment_h4.csv",
+    "bytes": 103692,
+    "sha256": "9e73c78ff35045a7dee070edb19eb341bb77379ed0ff90df01c96ead95328663"
+  },
+  {
+    "path": "results/air_quality_experiment.csv",
+    "bytes": 16091,
+    "sha256": "0a639fb700c7a970130bb3548d0a729f095601f18142ec54155ca55f8dfbd9e4"
+  },
+  {
+    "path": "results/ece_bin_sensitivity_raw.csv",
+    "bytes": 196789,
+    "sha256": "524eabd010c13c15a346396f196c4adebf81a14a78a44f72737bafa501c06591"
+  },
+  {
+    "path": "results/breakpoint_model_comparison.csv",
+    "bytes": 1514,
+    "sha256": "8f715a9d954b56a8aa786e0881e4948573b5705d7bc0196deb52f4e6f48b3af3"
+  },
+  {
+    "path": "results/localized_mmd_comparison_v2_correlation_ci.csv",
+    "bytes": 403,
+    "sha256": "86216f6a4c917803acd7b8ac821c39afbac1c563ca6e204f1e254d0e470108ef"
+  }
+]

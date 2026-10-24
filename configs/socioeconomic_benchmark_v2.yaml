@@ -9,7 +9,12 @@ dataset: socioeconomic
 regions:
   train_fraction: 0.7
   split_seed: 0
-  candidate_per_region: 40
+  # Raised from 40 (reviewer-flagged confound: with only 40 candidates in the
+  # single anchor region, alpha=1's labelled draw fell to 40 points instead of
+  # the intended n_labelled=50; the anchor region alone has 133 rows, so 50
+  # keeps the labelled sample size fixed across every severity level, with
+  # enough non-candidate rows left over for n_unlabelled + n_test_in).
+  candidate_per_region: 50
   n_unlabelled: 400
   n_test_in: 200
   n_test_out: 200

@@ -10,9 +10,17 @@ dataset: air_quality
 regions:
   train_fraction: 0.7
   split_seed: 0
-  candidate_per_region: 12
-  n_unlabelled: 150
-  n_test_in: 70
+  # Raised from 12 (reviewer-flagged confound: with only 12 candidates in the
+  # single anchor region, alpha=1's labelled draw fell to 12 points instead of
+  # the intended n_labelled=20; the anchor region alone has 113 rows, so 20 is
+  # enough to keep the labelled sample size fixed across every severity
+  # level). This dataset is small (581 in-distribution rows total), so
+  # n_unlabelled/n_test_in are reduced from 150/70 to fit within what remains
+  # after candidates are set aside -- they still stay fixed across every
+  # severity level exactly as before, just at a smaller absolute size.
+  candidate_per_region: 20
+  n_unlabelled: 90
+  n_test_in: 40
   n_test_out: 70
   pool_seed: 0
 

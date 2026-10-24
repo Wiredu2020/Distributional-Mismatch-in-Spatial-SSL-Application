@@ -1,0 +1,27 @@
+# Controlled unlabelled-pool ablation. Labelled set and both test sets are held
+# fixed (mismatch_alpha=1.0, the severe/realistic labelled-bias level used
+# throughout the main sweep); only the unlabelled pool's own sampling
+# distribution changes across four conditions: none, matched (uniform, matches
+# the target domain), partial, and strong (concentrated at label_anchor, same
+# region as the labels).
+
+output_csv: results/unlabelled_mismatch_experiment.csv
+
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+
+methods: [self_training, label_propagation]
+
+dataset:
+  grid_resolution: 100
+  n_features: 2
+  n_labelled: 150
+  n_unlabelled: 600
+  n_test_in: 300
+  n_test_out: 300
+  noise_std: 0.3
+  mismatch_alpha: 1.0
+  lengthscale: 0.08
+  nonstationarity_strength: 0.0
+  label_anchor: [0.25, 0.25]
+  bandwidth_min: 0.10
+  bandwidth_max: 0.75
