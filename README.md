@@ -299,3 +299,5 @@ The original software in this repository is licensed under CC-BY-4.0; see
 [LICENSE](LICENSE). 
 
 Software contact: Bright Wiredu Nuakoh, bright.wiredu@aims.ac.rw.
+
+This repos is published at https://doi.org/10.5281/zenodo.23307560 (Not always updated, GitHub version is recommended.)
