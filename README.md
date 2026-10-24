@@ -184,16 +184,14 @@ thresholds for deployment. Real-data conclusions depend on the geographic split.
 | `requirements.txt` | Full unpinned dependency list |
 | `docs/` | Data preparation, reproduction, and validation notes |
 
-The proposed revision includes author-supplied final result CSVs under `results/`; see
-`docs/RESEARCH_OUTPUTS.md` for provenance and checksums. Runners overwrite their
-configured output files. Data caches are local prerequisites, not
-bundled observations. The inspected repository has no `scripts/` directory;
-there is no `scripts/regenerate_figures.py` command in this checkout.
 
 ## Installation
 
-Use Python 3.10 or newer; the code contains modern union type syntax. Validation
-was performed in the environment recorded in `docs/VALIDATION.md`.
+Use Python 3.10 or newer; the code contains modern union type syntax.
+
+
+## NOTE
+The notebooks provide easy implemntations of the analysis performed. For the exact condiguration that establishes the results in this work use the following commands below.
 
 ```bash
 git clone https://github.com/Wiredu2020/Distributional-Mismatch-in-Spatial-SSL-Application.git
